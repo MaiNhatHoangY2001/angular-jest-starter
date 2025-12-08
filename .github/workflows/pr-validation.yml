@@ -1,0 +1,105 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    name: Validate Pull Request
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for merge conflicts
+        run: |
+          git fetch origin main
+          if git merge-tree $(git merge-base HEAD origin/main) HEAD origin/main | grep -q "<<<<<<< "; then
+            echo "❌ Merge conflicts detected"
+            exit 1
+          else
+            echo "✅ No merge conflicts detected"
+          fi
+
+      - name: Validate commit messages
+        uses: wagoid/commitlint-github-action@v5
+
+      - name: Check for TODO/FIXME comments
+        run: |
+          if grep -r "TODO\|FIXME\|XXX\|HACK" src/ --include="*.ts" --include="*.html"; then
+            echo "⚠️ TODO/FIXME comments found. Please resolve before merging."
+            echo "This is a warning, not blocking the PR."
+          else
+            echo "✅ No TODO/FIXME comments found"
+          fi
+
+      - name: Check bundle size impact
+        uses: andresz1/size-limit-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          build_script: build
+
+      - name: Run affected tests
+        run: |
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          echo "Changed files: $CHANGED_FILES"
+
+          # Run tests with coverage
+          npm test -- --watchAll=false --coverage --verbose
+
+      - name: Comment PR with coverage
+        if: github.event_name == 'pull_request'
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/lcov.info
+
+      - name: Validate Angular project structure
+        run: |
+          echo "🔍 Validating Angular project structure..."
+
+          # Check if standalone components are used correctly
+          if grep -r "standalone.*false" src/app --include="*.ts"; then
+            echo "❌ Found non-standalone components. Please use standalone components."
+            exit 1
+          fi
+
+          # Check if NgModules are being used (should not be in standalone apps)
+          if grep -r "@NgModule" src/app --include="*.ts"; then
+            echo "❌ Found NgModule usage. Please use standalone components instead."
+            exit 1
+          fi
+
+          # Check for proper signal usage
+          if grep -r "new BehaviorSubject\|new Subject\|new ReplaySubject" src/app --include="*.ts"; then
+            echo "⚠️ Found RxJS subjects. Consider using signals for better performance."
+          fi
+
+          echo "✅ Angular project structure validation completed"
+
+  auto-merge:
+    runs-on: ubuntu-latest
+    name: Auto-merge dependabot PRs
+    needs: validate-pr
+    if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
+
+    steps:
+      - name: Auto-merge dependabot PRs
+        uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          target: minor
+          github-token: ${{ secrets.GITHUB_TOKEN }}
