@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Read the commit message
+commit_message=$(cat "$1")
+
+# Skip validation for merge commits
+if echo "$commit_message" | grep -q "^Merge"; then
+  exit 0
+fi
+
+# Conventional Commits validation - more flexible regex
+commit_regex='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([^)]+\))?: .{3,}'
+
+if ! echo "$commit_message" | grep -qE "$commit_regex"; then
+    echo "❌ Invalid commit message format!"
+    echo ""
+    echo "Commit message should follow Conventional Commits format:"
+    echo "  <type>[optional scope]: <description>"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add user authentication"
+    echo "  fix(auth): resolve login issue"
+    echo "  docs: update README"
+    echo "  style: format code with prettier"
+    echo "  refactor: restructure user service"
+    echo "  test: add unit tests for auth service"
+    echo ""
+    echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+    echo "📝 Your message: $commit_message"
+    echo ""
+    exit 1
+fi

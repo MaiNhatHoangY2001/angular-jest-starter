@@ -38,10 +38,59 @@ This will compile your project and store the build artifacts in the `dist/` dire
 
 ## Running unit tests
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+To execute unit tests with Jest, use the following command:
 
 ```bash
-ng test
+npm test
+```
+
+## Linting
+
+To lint your code, run:
+
+```bash
+npm run lint
+```
+
+To automatically fix linting issues:
+
+```bash
+npm run lint:fix
+```
+
+## Git Hooks with Husky
+
+This project uses [Husky](https://github.com/typicode/husky) to run automated checks before commits and pushes.
+
+### Pre-commit Hook
+
+- Runs ESLint to check code quality
+- Runs Jest tests to ensure functionality
+
+### Pre-push Hook
+
+- Builds the application to ensure it compiles
+- Runs tests with coverage
+- Final lint check
+
+### Commit Message Hook
+
+- Enforces [Conventional Commits](https://www.conventionalcommits.org/) format
+- Valid commit types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+Example commit messages:
+
+```bash
+feat: add user authentication
+fix(auth): resolve login issue
+docs: update README
+```
+
+### Husky Commands
+
+```bash
+npm run husky:install  # Reinstall husky hooks
+npm run husky:add      # Add a new hook
 ```
 
 ## Running end-to-end tests
