@@ -1,5 +1,12 @@
 # Ecom
 
+[![CI Pipeline](https://github.com/MaiNhatHoangY2001/angular-jest-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/MaiNhatHoangY2001/angular-jest-starter/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/MaiNhatHoangY2001/angular-jest-starter/branch/main/graph/badge.svg)](https://codecov.io/gh/MaiNhatHoangY2001/angular-jest-starter)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Angular](https://img.shields.io/badge/Angular-21.0.0-red.svg)](https://angular.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue.svg)](https://www.typescriptlang.org/)
+[![Jest](https://img.shields.io/badge/Jest-30.2.0-green.svg)](https://jestjs.io/)
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
 
 ## Development server

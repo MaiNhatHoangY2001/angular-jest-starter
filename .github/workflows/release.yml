@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Build and Release
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run full test suite
+        run: npm test -- --watchAll=false --coverage
+
+      - name: Build production
+        run: npm run build
+
+      - name: Create release archive
+        run: |
+          cd dist
+          tar -czf ../angular-app-${{ github.ref_name }}.tar.gz .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: angular-app-${{ github.ref_name }}.tar.gz
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-preview:
+    runs-on: ubuntu-latest
+    name: Deploy Preview
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
