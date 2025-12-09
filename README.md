@@ -1,4 +1,4 @@
-# Ecom
+# angular-jest-starter
 
 [![CI Pipeline](https://github.com/MaiNhatHoangY2001/angular-jest-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/MaiNhatHoangY2001/angular-jest-starter/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/MaiNhatHoangY2001/angular-jest-starter/branch/main/graph/badge.svg)](https://codecov.io/gh/MaiNhatHoangY2001/angular-jest-starter)
