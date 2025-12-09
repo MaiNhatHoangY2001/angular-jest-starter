@@ -32,8 +32,8 @@ jobs:
 
       - name: Create release archive
         run: |
-          cd dist
-          tar -czf ../angular-app-${{ github.ref_name }}.tar.gz .
+          cd dist/angular-jest-starter/browser
+          tar -czf ../../../angular-app-${{ github.ref_name }}.tar.gz .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -65,10 +65,14 @@ jobs:
       - name: Build Angular
         run: |
           npm run build -- --base-href "/${{ github.event.repository.name }}/"
-          
+
+      - name: Copy index.html to 404.html for GitHub Pages SPA support
+        run: |
+          cp ./dist/angular-jest-starter/browser/index.html ./dist/angular-jest-starter/browser/404.html
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./dist/angular-jest-starter/browser

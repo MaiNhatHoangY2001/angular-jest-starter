@@ -158,6 +158,47 @@ export default [
 
   // Global ignores
   {
-    ignores: ['dist/', 'node_modules/', 'coverage/', '*.js', '*.mjs', '.angular/', 'karma.conf.js'],
+    ignores: [
+      // Dependencies
+      'node_modules/',
+
+      // Build outputs
+      'dist/',
+      '.angular/',
+      'out-tsc/',
+
+      // Coverage and test results
+      'coverage/',
+      '*.lcov',
+
+      // Environment and configuration files
+      '.env',
+      '.env.local',
+      '.env.*.local',
+
+      // IDE and OS files
+      '.vscode/',
+      '.idea/',
+      '.DS_Store',
+      'Thumbs.db',
+
+      // Logs
+      '*.log',
+      'npm-debug.log*',
+      'yarn-debug.log*',
+      'yarn-error.log*',
+
+      // Runtime data
+      'pids',
+      '*.pid',
+      '*.seed',
+      '*.pid.lock',
+
+      // Generated files
+      '*.tsbuildinfo',
+
+      // Additional config files
+      'karma.conf.js',
+    ],
   },
 ];
