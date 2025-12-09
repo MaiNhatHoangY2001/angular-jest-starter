@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "ecom": {
+    "angular-jest-starter": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -58,10 +58,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ecom:build:production"
+              "buildTarget": "angular-jest-starter:build:production"
             },
             "development": {
-              "buildTarget": "ecom:build:development"
+              "buildTarget": "angular-jest-starter:build:development"
             }
           },
           "defaultConfiguration": "development"
